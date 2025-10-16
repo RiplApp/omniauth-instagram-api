@@ -34,7 +34,12 @@ module OmniAuth
         }
       end
 
-      extra { {raw_info: raw_info} }
+      extra do
+        {
+          raw_info: raw_info,
+          permissions: superclass
+        }
+      end
 
       def token_params
         super.tap do |params|
@@ -48,11 +53,15 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= long_lived_token.get("/me", params: {fields: DEFAULT_FIELDS}).parsed
+        @raw_info ||= long_lived_token.get("/me", params: { fields: DEFAULT_FIELDS }).parsed
+      end
+
+      def permissions
+        access_token.params["permissions"]
       end
 
       def long_lived_token
-        @long_lived_token ||= ::OAuth2::AccessToken.from_hash(client, access_token.get("/access_token", params: {grant_type: "ig_exchange_token", client_secret: options.client_secret, access_token: access_token.token}).parsed)
+        @long_lived_token ||= ::OAuth2::AccessToken.from_hash(client, access_token.get("/access_token", params: { grant_type: "ig_exchange_token", client_secret: options.client_secret, access_token: access_token.token }).parsed)
       end
     end
   end
