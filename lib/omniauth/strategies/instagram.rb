@@ -37,7 +37,7 @@ module OmniAuth
       extra do
         {
           raw_info: raw_info,
-          permissions: superclass
+          permissions: permissions
         }
       end
 
